@@ -2,6 +2,7 @@ import requests
 import lancedb
 from lancedb.pydantic import LanceModel, Vector
 from lancedb.embeddings import get_registry
+from lancedb.index import FTS
 
 # Set up LanceDB embedding function
 db = lancedb.connect("data/lancedb")
@@ -9,7 +10,7 @@ func = get_registry().get("sentence-transformers").create(name="all-MiniLM-L6-v2
 
 class ThreatIntelRecord(LanceModel):
     id: str
-    source: str           # "MITRE_ATTACK" or "CISA_KEV"
+    source: str         # "MITRE_ATTACK" or "CISA_KEV"
     title: str
     description: str
     vector: Vector(func.ndims()) = func.VectorField()
@@ -80,10 +81,18 @@ def main():
     
     print(f"Successfully indexed {len(all_intel)} threat intelligence entries into LanceDB.")
 
-    # Test Vector Query
+    # Create FTS index using modern config to avoid deprecation warnings
+    print("Creating FTS index for text search...")
+    table.create_index("description", config=FTS())
+    table.create_index("title", config=FTS())
+
+    # Test Semantic Vector Query
     test_query = "encoded powershell execution hidden window"
     print(f"\nTesting Vector Search for query: '{test_query}'")
-    results = table.search(test_query).limit(2).to_list()
+    
+    # Generate embedding for the query string to execute a proper vector distance search
+    query_vector = func.generate_embeddings(test_query)[0]
+    results = table.search(query_vector).limit(2).to_list()
     
     for r in results:
         print(f" -> [{r['source']}] {r['id']} - {r['title']} (Distance: {round(r['_distance'], 4)})")
