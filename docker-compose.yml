@@ -73,7 +73,7 @@ services:
     command: python src/agents/agent_service.py
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=redpanda:9092
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     volumes:
       - ./data:/app/data
     depends_on:
