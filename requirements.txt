@@ -1,17 +1,13 @@
-# Streaming & Core Data Tools
-confluent-kafka>=2.3.0
-polars>=0.20.0
-pyarrow>=15.0.0
-duckdb>=0.10.0
-deltalake>=0.17.0
 
-# Vector DB & Embeddings
-lancedb>=0.6.0
-sentence-transformers>=2.6.0
 
-# General Utilities
-pydantic>=2.6.0
-python-dotenv>=1.0.0
-requests>=2.31.0
-pandas>=2.0.0
-numpy>=1.30.0
+fastapi
+uvicorn
+streamlit
+plotly
+duckdb
+lancedb
+langgraph
+langchain
+langchain-core
+langchain-google-genai
+confluent-kafka
